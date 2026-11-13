@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive System Architecture Demo</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #151d2c;
+      --border: #26334d;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 14px 28px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+    .layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 24px 96px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 28px;
+    }
+    nav { position: sticky; top: 80px; align-self: start; }
+    nav ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    nav a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a.active, nav a:hover { background: var(--card); color: var(--accent); font-weight: 600; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      scroll-margin-top: 84px;
+    }
+    h2 { margin-bottom: 10px; font-size: 19px; }
+    p { color: var(--muted); font-size: 14.5px; }
+  </style>
+</head>
+<body>
+  <header>HTML Note View · Full-Tab Interactive Demo</header>
+  <div class="layout">
+    <nav>
+      <ul>
+        <li><a href="#sec-why" class="active">01 · Architecture</a></li>
+        <li><a href="#sec-bridge">02 · Theme &amp; Link Bridge</a></li>
+        <li><a href="#sec-lint">03 · On-Save Tag Linter</a></li>
+      </ul>
+    </nav>
+    <main>
+      <section id="sec-why">
+        <h2>01 · Why Thin .md Host + .html Attachment?</h2>
+        <p>Preserves native Obsidian Bases (.base) tag columns, backlinks, and full-text search while rendering 100% edge-to-edge interactive HTML.</p>
+      </section>
+      <section id="sec-bridge">
+        <h2>02 · Theme Sync &amp; Smooth TOC Anchor Bridge</h2>
+        <p>Automatically syncs Obsidian dark/light mode onto data-theme and fixes #anchor smooth scrolling and external browser links inside Electron srcdoc.</p>
+      </section>
+      <section id="sec-lint">
+        <h2>03 · On-Save Frontmatter Tag &amp; Status Linter</h2>
+        <p>Validates lowercase kebab-case tags, tag count limits, and optional canonical tag dictionaries whenever frontmatter changes.</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

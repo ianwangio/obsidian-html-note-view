@@ -1,4 +1,5 @@
-import { FileView, Plugin, TFile, WorkspaceLeaf, setIcon } from 'obsidian';
+import { Command, FileView, Plugin, TFile, WorkspaceLeaf, setIcon } from 'obsidian';
+import { t } from './i18n';
 import { NoteMetadataLinter } from './linter';
 import { extractHtmlFromRawFrontmatter, normalizeHtmlTarget, parseCsvList } from './parser';
 import { HtmlNoteViewSettingTab } from './settings';
@@ -8,6 +9,7 @@ import { FullHtmlLeafView } from './view';
 export default class HtmlNoteViewPlugin extends Plugin {
   settings: HtmlNoteViewSettings = { ...DEFAULT_SETTINGS };
   linter!: NoteMetadataLinter;
+  private toggleCommand: Command | null = null;
   private markdownOverride = new WeakMap<WorkspaceLeaf, string>();
   private switchingLeaves = new WeakSet<WorkspaceLeaf>();
 
@@ -47,9 +49,10 @@ export default class HtmlNoteViewPlugin extends Plugin {
         if (!(file instanceof TFile) || file.extension !== 'md') return;
         if (!this.getHtmlTargetSync(file)) return;
         if (leaf && leaf.view.getViewType() === 'markdown') {
+          const i18n = t(this.settings.language);
           menu.addItem((item) => {
             item
-              .setTitle('切换为全屏网页视图')
+              .setTitle(i18n.menuToHtml)
               .setIcon('globe')
               .onClick(() => {
                 void this.switchLeafToHtml(leaf, file);
@@ -59,9 +62,9 @@ export default class HtmlNoteViewPlugin extends Plugin {
       })
     );
 
-    this.addCommand({
+    this.toggleCommand = this.addCommand({
       id: 'toggle-html-markdown-view',
-      name: '在「全屏网页视图」与「Markdown 视图」之间切换',
+      name: t(this.settings.language).cmdToggleView,
       checkCallback: (checking: boolean) => {
         const leaf = this.app.workspace.getMostRecentLeaf();
         const view = leaf?.view;
@@ -132,7 +135,7 @@ export default class HtmlNoteViewPlugin extends Plugin {
         const propEl = target.closest('.metadata-property');
         if (!propEl) return;
         const propKey = propEl.getAttribute('data-property-key') || '';
-        const configuredKeys = parseCsvList(this.settings.propertyKeys);
+        const configuredKeys = this.getPropertyKeyList();
         if (!configuredKeys.includes(propKey)) return;
 
         const linkEl = target.closest('.internal-link, .metadata-link-inner, .external-link');
@@ -177,6 +180,19 @@ export default class HtmlNoteViewPlugin extends Plugin {
 
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
+  }
+
+  refreshCommandAndButtonsLocale(): void {
+    const i18n = t(this.settings.language);
+    if (this.toggleCommand) {
+      this.toggleCommand.name = `${this.manifest.name}: ${i18n.cmdToggleView}`;
+    }
+    for (const leaf of this.app.workspace.getLeavesOfType('markdown')) {
+      const btn = leaf.view.containerEl.querySelector<HTMLButtonElement>('.html-note-return-btn');
+      if (btn) {
+        btn.setAttribute('aria-label', i18n.actionToHtml);
+      }
+    }
   }
 
   refreshAllHtmlLeaves(): void {
@@ -254,13 +270,14 @@ export default class HtmlNoteViewPlugin extends Plugin {
       return;
     }
 
+    const i18n = t(this.settings.language);
     if (!btn) {
       btn = document.createElement('button');
       btn.className = 'clickable-icon view-action html-note-return-btn';
-      btn.setAttribute('aria-label', '切换回全屏网页视图');
       setIcon(btn, 'globe');
       actionsEl.prepend(btn);
     }
+    btn.setAttribute('aria-label', i18n.actionToHtml);
     btn.onclick = () => {
       void this.switchLeafToHtml(leaf, file);
     };

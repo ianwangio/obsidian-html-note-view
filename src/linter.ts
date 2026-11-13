@@ -1,5 +1,6 @@
 import { App, Notice, TFile } from 'obsidian';
 import { extractNormalizedTags } from './bridge';
+import { t } from './i18n';
 import { parseCsvList } from './parser';
 import { HtmlNoteViewSettings } from './types';
 
@@ -44,6 +45,7 @@ export class NoteMetadataLinter {
     const fm = cache?.frontmatter;
     if (!fm) return [];
 
+    const i18n = t(settings.language);
     const errors: string[] = [];
     const allowedStatuses = new Set(parseCsvList(settings.validStatuses));
     const forbiddenTags = new Set(parseCsvList(settings.forbiddenTags));
@@ -51,36 +53,34 @@ export class NoteMetadataLinter {
     if (typeof fm.status === 'string' && fm.status.trim() && allowedStatuses.size > 0) {
       const st = fm.status.trim();
       if (!allowedStatuses.has(st)) {
-        errors.push(`非法 status "${st}"（不在允许的状态集合内）`);
+        errors.push(i18n.lintInvalidStatus(st));
       }
     }
 
     const tags = extractNormalizedTags(fm);
     if (settings.maxTags > 0 && tags.length > settings.maxTags) {
-      errors.push(`tags 数量 (${tags.length}) 超过上限 (${settings.maxTags})`);
+      errors.push(i18n.lintTooManyTags(tags.length, settings.maxTags));
     }
 
     for (const tag of tags) {
       if (forbiddenTags.has(tag)) {
-        errors.push(`标签 "${tag}" 被设为默认禁标项，请移除`);
+        errors.push(i18n.lintForbiddenTag(tag));
         continue;
       }
       if (settings.enforceKebabCaseTags && !KEBAB_TAG_RE.test(tag)) {
-        errors.push(
-          `标签 "${tag}" 格式不合法（须为英文小写 kebab-case，至多两级 "/" 分隔，严禁用 ":" 或中文）`
-        );
+        errors.push(i18n.lintInvalidTagFormat(tag));
         continue;
       }
       if (this.canonicalTags.size > 0 && !this.canonicalTags.has(tag)) {
-        errors.push(`标签 "${tag}" 不在受控标签词表 (${settings.canonicalTagSpecPath}) 内`);
+        errors.push(i18n.lintNotInCanonical(tag, settings.canonicalTagSpecPath));
       }
     }
 
-    const sig = errors.join('|');
+    const sig = `${settings.language}:${errors.join('|')}`;
     if (errors.length > 0) {
       if (this.lastAlertSignature.get(file.path) !== sig) {
         this.lastAlertSignature.set(file.path, sig);
-        new Notice(`⚠️ Metadata Lint (${file.name}):\n• ${errors.join('\n• ')}`, 7000);
+        new Notice(`${i18n.lintNoticeHeader(file.name)}\n• ${errors.join('\n• ')}`, 7000);
       }
     } else {
       this.lastAlertSignature.delete(file.path);

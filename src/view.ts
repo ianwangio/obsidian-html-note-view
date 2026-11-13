@@ -1,5 +1,6 @@
 import { FileView, Menu, TFile, WorkspaceLeaf } from 'obsidian';
 import { escapeHtml, prepareHtmlSrcdoc } from './bridge';
+import { t } from './i18n';
 import type HtmlNoteViewPlugin from './main';
 import { HTML_NOTE_VIEW_TYPE } from './types';
 
@@ -15,6 +16,7 @@ export class FullHtmlLeafView extends FileView {
   plugin: HtmlNoteViewPlugin;
   iframe: HTMLIFrameElement | null = null;
   targetHtmlPath: string | null = null;
+  private toMarkdownActionEl: HTMLElement | null = null;
 
   constructor(leaf: WorkspaceLeaf, plugin: HtmlNoteViewPlugin) {
     super(leaf);
@@ -43,7 +45,8 @@ export class FullHtmlLeafView extends FileView {
   onload(): void {
     super.onload();
 
-    this.addAction('file-code', '切换为 Markdown 视图（编辑属性 / 检索摘要）', () => {
+    const i18n = t(this.plugin.settings.language);
+    this.toMarkdownActionEl = this.addAction('file-code', i18n.actionToMarkdown, () => {
       if (this.file) {
         void this.plugin.switchLeafToMarkdown(this.leaf, this.file);
       }
@@ -63,10 +66,18 @@ export class FullHtmlLeafView extends FileView {
     });
   }
 
+  refreshActionTooltips(): void {
+    if (this.toMarkdownActionEl) {
+      const label = t(this.plugin.settings.language).actionToMarkdown;
+      this.toMarkdownActionEl.setAttribute('aria-label', label);
+    }
+  }
+
   onPaneMenu(menu: Menu, source: string): void {
+    const i18n = t(this.plugin.settings.language);
     menu.addItem((item) => {
       item
-        .setTitle('切换为 Markdown 视图（编辑属性 / 检索摘要）')
+        .setTitle(i18n.menuToMarkdown)
         .setIcon('file-code')
         .onClick(() => {
           if (this.file) {
@@ -86,16 +97,18 @@ export class FullHtmlLeafView extends FileView {
 
   async renderCurrentFile(file: TFile): Promise<void> {
     if (!file || !this.iframe) return;
+    this.refreshActionTooltips();
+    const i18n = t(this.plugin.settings.language);
 
     const htmlTarget = await this.plugin.getHtmlTargetFromNote(file);
     if (!htmlTarget) {
-      this.iframe.srcdoc = `<body style="font-family:system-ui,sans-serif;padding:32px;color:#94a3b8;background:#0f172a;">未在 <code>${escapeHtml(file.path)}</code> 的 frontmatter 中找到 HTML 关联属性（如 <code>html: "[[attachments/xxx.html]]"</code>）。</body>`;
+      this.iframe.srcdoc = `<body style="font-family:system-ui,sans-serif;padding:32px;color:#94a3b8;background:#0f172a;">${i18n.errMissingProperty(escapeHtml(file.path))}</body>`;
       return;
     }
 
     const htmlFile = this.plugin.resolveHtmlAttachment(htmlTarget, file.path);
     if (!(htmlFile instanceof TFile)) {
-      this.iframe.srcdoc = `<body style="font-family:system-ui,sans-serif;padding:32px;color:#ef4444;background:#0f172a;">找不到关联的 HTML 文件：<code>${escapeHtml(htmlTarget)}</code></body>`;
+      this.iframe.srcdoc = `<body style="font-family:system-ui,sans-serif;padding:32px;color:#ef4444;background:#0f172a;">${i18n.errMissingHtmlFile(escapeHtml(htmlTarget))}</body>`;
       return;
     }
 

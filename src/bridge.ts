@@ -1,4 +1,5 @@
 import { FrontMatterCache } from 'obsidian';
+import { t } from './i18n';
 import { HtmlNoteViewSettings, STATUS_DISPLAY_MAP } from './types';
 
 const BADGE_BLOCK_RE = /\n<!-- VAULT-BADGE:START -->[\s\S]*?<!-- VAULT-BADGE:END -->/g;
@@ -44,6 +45,7 @@ export function buildCornerBadgeHtml(
   const offset = Math.max(8, Number(settings.badgeOffsetPx) || 64);
   const verticalPosCss =
     settings.badgePosition === 'bottom-right' ? `bottom: 20px;` : `top: ${offset}px;`;
+  const i18n = t(settings.language);
 
   return `<!-- VAULT-BADGE:START -->
 <style id="vault-corner-badge-style">
@@ -108,9 +110,9 @@ export function buildCornerBadgeHtml(
   #vault-corner-badge .vb-toggle:hover { color: #f8fafc; }
   html[data-theme="light"] #vault-corner-badge .vb-toggle:hover { color: #0f172a; }
 </style>
-<aside id="vault-corner-badge" aria-label="Note metadata">
+<aside id="vault-corner-badge" aria-label="${escapeHtml(i18n.badgeAriaLabel)}">
   <span class="vb-body">${statusSpan}${tagSpans}${dateSpan}</span>
-  <button class="vb-toggle" type="button" title="Collapse / expand metadata badge" onclick="const p=this.parentElement;p.classList.toggle('vb-collapsed');this.textContent=p.classList.contains('vb-collapsed')?'🏷️':'×';">×</button>
+  <button class="vb-toggle" type="button" title="${escapeHtml(i18n.badgeToggleTitle)}" onclick="const p=this.parentElement;p.classList.toggle('vb-collapsed');this.textContent=p.classList.contains('vb-collapsed')?'🏷️':'×';">×</button>
 </aside>
 <!-- VAULT-BADGE:END -->`;
 }

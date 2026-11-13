@@ -1,8 +1,11 @@
 export const HTML_NOTE_VIEW_TYPE = 'html-note-view';
 
 export type BadgePosition = 'top-right' | 'bottom-right';
+export type LanguageSetting = 'auto' | 'en' | 'zh';
 
 export interface HtmlNoteViewSettings {
+  /** UI language preference: follow Obsidian locale or force en/zh */
+  language: LanguageSetting;
   /** Comma-separated frontmatter keys pointing to an HTML file, e.g. "html, html-file" */
   propertyKeys: string;
   /** Automatically open notes with an HTML property in Full HTML View */
@@ -30,6 +33,7 @@ export interface HtmlNoteViewSettings {
 }
 
 export const DEFAULT_SETTINGS: HtmlNoteViewSettings = {
+  language: 'auto',
   propertyKeys: 'html, html-file',
   autoOpenHtmlView: true,
   syncTheme: true,

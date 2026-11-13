@@ -1,6 +1,6 @@
 {
   "name": "obsidian-html-note-view",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Render interactive HTML attachments as full-tab Obsidian views while keeping native Markdown frontmatter, Bases (.base) tags, wikilinks, and full-text search.",
   "main": "main.js",
   "scripts": {
