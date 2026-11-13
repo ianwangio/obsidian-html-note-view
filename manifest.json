@@ -1,8 +1,8 @@
 {
   "id": "html-note-view",
   "name": "HTML Note View",
-  "version": "0.2.0",
-  "minAppVersion": "1.5.0",
+  "version": "0.2.1",
+  "minAppVersion": "1.9.0",
   "description": "Render interactive HTML attachments as edge-to-edge full-tab views while preserving Markdown properties, Bases tags, wikilinks, full-text search, and tag linting.",
   "author": "IanWang",
   "authorUrl": "https://github.com/ianwangio",

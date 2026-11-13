@@ -126,10 +126,14 @@ export default class HtmlNoteViewPlugin extends Plugin {
 
     // Intercept clicks on the HTML wikilink inside Markdown Properties panel to enter Full HTML View seamlessly
     this.registerDomEvent(
-      document,
+      activeDocument,
       'click',
       (evt: MouseEvent) => {
-        const target = evt.target instanceof Element ? evt.target : null;
+        const rawTarget = evt.target as Partial<Node> | null;
+        const target =
+          rawTarget && typeof rawTarget.instanceOf === 'function' && rawTarget.instanceOf(Element)
+            ? rawTarget
+            : null;
         if (!target) return;
 
         const propEl = target.closest('.metadata-property');
@@ -236,8 +240,8 @@ export default class HtmlNoteViewPlugin extends Plugin {
   hasDocPageClass(file: TFile): boolean {
     const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
     if (!fm || !fm.cssclasses) return false;
-    const raw = fm.cssclasses;
-    const classes = Array.isArray(raw) ? raw : [raw];
+    const raw: unknown = fm.cssclasses;
+    const classes: unknown[] = Array.isArray(raw) ? raw : [raw];
     return classes.includes('doc-page');
   }
 
@@ -272,8 +276,9 @@ export default class HtmlNoteViewPlugin extends Plugin {
 
     const i18n = t(this.settings.language);
     if (!btn) {
-      btn = document.createElement('button');
-      btn.className = 'clickable-icon view-action html-note-return-btn';
+      btn = actionsEl.createEl('button', {
+        cls: 'clickable-icon view-action html-note-return-btn',
+      });
       setIcon(btn, 'globe');
       actionsEl.prepend(btn);
     }

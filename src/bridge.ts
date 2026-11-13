@@ -9,19 +9,31 @@ const BODY_CLOSE_RE = /(<\/body\s*>)/i;
 const HTML_TAG_OPEN_RE = /<html\b([^>]*)>/i;
 
 export function escapeHtml(str: unknown): string {
-  return String(str ?? '')
+  const safe =
+    typeof str === 'string'
+      ? str
+      : typeof str === 'number' || typeof str === 'boolean'
+        ? String(str)
+        : '';
+  return safe
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
 
+function toPrimitiveString(val: unknown): string {
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+  return '';
+}
+
 export function extractNormalizedTags(fm?: FrontMatterCache | Record<string, unknown> | null): string[] {
   if (!fm) return [];
-  const raw = fm.tags;
-  const list = Array.isArray(raw) ? raw : typeof raw === 'string' ? [raw] : [];
+  const raw: unknown = fm.tags;
+  const list: unknown[] = Array.isArray(raw) ? raw : typeof raw === 'string' ? [raw] : [];
   return list
-    .map((t) => String(t).replace(/^#/, '').trim())
+    .map((item) => toPrimitiveString(item).replace(/^#/, '').trim())
     .filter(Boolean);
 }
 
@@ -32,11 +44,9 @@ export function buildCornerBadgeHtml(
   const statusRaw = typeof fm.status === 'string' ? fm.status.trim() : '';
   const statusLabel = statusRaw ? escapeHtml(STATUS_DISPLAY_MAP[statusRaw] || statusRaw) : '';
   const tags = extractNormalizedTags(fm);
-  const dateVal = fm.updated
-    ? String(fm.updated).slice(0, 10)
-    : fm.created
-      ? String(fm.created).slice(0, 10)
-      : '';
+  const rawUpdated = toPrimitiveString(fm.updated);
+  const rawCreated = toPrimitiveString(fm.created);
+  const dateVal = rawUpdated ? rawUpdated.slice(0, 10) : rawCreated ? rawCreated.slice(0, 10) : '';
 
   const statusSpan = statusLabel ? `<span class="vb-status">${statusLabel}</span>` : '';
   const tagSpans = tags.map((t) => `<span class="vb-tag">#${escapeHtml(t)}</span>`).join('');

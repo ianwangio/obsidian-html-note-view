@@ -1,4 +1,4 @@
-import { moment } from 'obsidian';
+import { getLanguage } from 'obsidian';
 import { LanguageSetting } from './types';
 
 export type ResolvedLocale = 'en' | 'zh';
@@ -6,11 +6,7 @@ export type ResolvedLocale = 'en' | 'zh';
 export function resolveLocale(setting: LanguageSetting = 'auto'): ResolvedLocale {
   if (setting === 'en' || setting === 'zh') return setting;
   try {
-    const stored =
-      typeof window !== 'undefined' && window.localStorage
-        ? window.localStorage.getItem('language') || ''
-        : '';
-    const raw = (stored || moment.locale() || '').toLowerCase();
+    const raw = (getLanguage() || '').toLowerCase();
     if (raw.startsWith('zh')) return 'zh';
   } catch {
     // Fallback to English if locale lookup fails
@@ -76,19 +72,19 @@ export interface Translations {
 }
 
 const EN: Translations = {
-  cmdToggleView: 'Toggle between Full HTML view and Markdown view',
-  actionToMarkdown: 'Switch to Markdown view (edit properties / summary)',
-  actionToHtml: 'Switch to Full HTML view',
-  menuToMarkdown: 'Switch to Markdown view (edit properties / summary)',
-  menuToHtml: 'Switch to Full HTML view',
+  cmdToggleView: 'Toggle between full HTML view and Markdown view',
+  actionToMarkdown: 'Switch to Markdown view (edit properties or summary)',
+  actionToHtml: 'Switch to full HTML view',
+  menuToMarkdown: 'Switch to Markdown view (edit properties or summary)',
+  menuToHtml: 'Switch to full HTML view',
   badgeAriaLabel: 'Note metadata',
-  badgeToggleTitle: 'Collapse / expand metadata badge',
+  badgeToggleTitle: 'Collapse or expand metadata badge',
   errMissingProperty: (filePath) =>
     `No HTML target property (e.g. <code>html: "[[attachments/demo.html]]"</code>) found in frontmatter of <code>${filePath}</code>.`,
   errMissingHtmlFile: (target) =>
     `Target HTML file could not be found in vault: <code>${target}</code>`,
 
-  lintNoticeHeader: (fileName) => `⚠️ Metadata Lint (${fileName}):`,
+  lintNoticeHeader: (fileName) => `⚠️ Metadata lint (${fileName}):`,
   lintInvalidStatus: (status) => `Invalid status "${status}" (not in allowed status list)`,
   lintTooManyTags: (count, max) => `Too many tags (${count}); maximum allowed is ${max}`,
   lintForbiddenTag: (tag) => `Tag "${tag}" is marked as a forbidden default tag; please remove it`,
@@ -97,21 +93,21 @@ const EN: Translations = {
   lintNotInCanonical: (tag, specPath) =>
     `Tag "${tag}" is not listed in canonical tag dictionary (${specPath})`,
 
-  settingsGeneralHeading: 'HTML Note View — View & Rendering',
+  settingsGeneralHeading: 'View and rendering',
   settingLanguageName: 'Interface language',
   settingLanguageDesc: 'Language used for plugin menus, tooltips, settings, and lint notices.',
-  settingLanguageAuto: 'Auto (Follow Obsidian)',
+  settingLanguageAuto: 'Auto (follow Obsidian)',
   settingPropKeysName: 'Frontmatter HTML property keys',
   settingPropKeysDesc:
     'Comma-separated property names pointing to an HTML file, e.g. html: "[[attachments/demo.html]]".',
-  settingAutoOpenName: 'Automatically open in Full HTML view',
+  settingAutoOpenName: 'Automatically open in full HTML view',
   settingAutoOpenDesc:
     'Open .md notes containing an HTML property directly in edge-to-edge HTML view. You can switch back to Markdown anytime via the header button.',
-  settingSyncThemeName: 'Sync Obsidian dark/light theme',
+  settingSyncThemeName: 'Sync dark and light theme',
   settingSyncThemeDesc:
-    'Automatically synchronize Obsidian’s active dark/light mode onto <html data-theme="dark|light">.',
+    'Automatically synchronize active dark or light mode onto <html data-theme="dark|light">.',
 
-  settingsBadgeHeading: 'Floating Metadata Badge (Status & Tags)',
+  settingsBadgeHeading: 'Floating metadata badge',
   settingShowBadgeName: 'Show floating metadata badge',
   settingShowBadgeDesc:
     'Render a collapsible glassmorphism pill showing status, #tags, and updated date from the host .md frontmatter.',
@@ -123,8 +119,8 @@ const EN: Translations = {
   settingBadgeOffsetDesc:
     'Vertical offset from top edge to avoid overlapping sticky headers inside HTML pages (default: 64).',
 
-  settingsLintHeading: 'On-Save Metadata Linter (Tags & Status)',
-  settingEnableLintName: 'Enable frontmatter tag & status lint on save',
+  settingsLintHeading: 'On-save metadata linter',
+  settingEnableLintName: 'Enable frontmatter tag and status lint on save',
   settingEnableLintDesc:
     'Validate tags and status whenever an HTML-backed note is modified and show a notice on violations.',
   settingKebabTagsName: 'Enforce lowercase kebab-case tags',
@@ -164,31 +160,31 @@ const ZH: Translations = {
   lintNotInCanonical: (tag, specPath) =>
     `标签 "${tag}" 不在受控标签词表 (${specPath}) 内`,
 
-  settingsGeneralHeading: 'HTML Note View — 视图与渲染设置',
-  settingLanguageName: '界面语言 / Interface Language',
+  settingsGeneralHeading: '视图与渲染',
+  settingLanguageName: '界面语言',
   settingLanguageDesc: '设置插件菜单、按钮提示、配置面板与 Lint 告警的显示语言。',
-  settingLanguageAuto: '自动跟随 Obsidian (Auto)',
+  settingLanguageAuto: '自动跟随 Obsidian',
   settingPropKeysName: '关联 HTML 的 Frontmatter 属性名',
   settingPropKeysDesc:
     '支持多个键名（逗号分隔），推荐使用双链写法如 html: "[[attachments/demo.html]]"。',
   settingAutoOpenName: '打开笔记时自动进入全屏网页视图',
   settingAutoOpenDesc:
     '开启后，包含 html 属性的 .md 笔记默认以 100% 全屏标签页渲染；仍可随时点右上角图标切回 Markdown。',
-  settingSyncThemeName: '自动同步 Obsidian 亮暗主题',
+  settingSyncThemeName: '自动同步亮暗主题',
   settingSyncThemeDesc:
-    '将 Obsidian 当前深浅色实时同步至 HTML 根节点的 data-theme="dark|light" 属性。',
+    '将当前深浅色实时同步至 HTML 根节点的 data-theme="dark|light" 属性。',
 
-  settingsBadgeHeading: '悬浮元数据胶囊栏（Status & Tags）',
+  settingsBadgeHeading: '悬浮元数据胶囊栏',
   settingShowBadgeName: '在网页角落显示状态与标签胶囊栏',
   settingShowBadgeDesc: '从宿主 .md 的 frontmatter 读取 status、#tags 与更新日期，支持一键折叠。',
   settingBadgePosName: '胶囊栏悬浮位置',
   settingBadgePosDesc: '选择在页面右上角或右下角展示元数据胶囊栏。',
-  settingBadgePosTopRight: '右上角 (Top Right)',
-  settingBadgePosBottomRight: '右下角 (Bottom Right)',
+  settingBadgePosTopRight: '右上角',
+  settingBadgePosBottomRight: '右下角',
   settingBadgeOffsetName: '右上角顶部偏移距离 (px)',
   settingBadgeOffsetDesc: '避让 HTML 页面自身的吸顶导航栏（默认 64px）。',
 
-  settingsLintHeading: '保存时标签与状态校验（Metadata Linter）',
+  settingsLintHeading: '保存时标签与状态校验',
   settingEnableLintName: '启用 Frontmatter 标签与状态自动 Lint',
   settingEnableLintDesc: '当修改 HTML 笔记的 tags 或 status 时自动校验格式，违规时弹出提示。',
   settingKebabTagsName: '强制英文小写 kebab-case 标签格式',

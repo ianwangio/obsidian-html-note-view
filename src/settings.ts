@@ -17,7 +17,7 @@ export class HtmlNoteViewSettingTab extends PluginSettingTab {
 
     const i18n = t(this.plugin.settings.language);
 
-    containerEl.createEl('h2', { text: i18n.settingsGeneralHeading });
+    new Setting(containerEl).setName(i18n.settingsGeneralHeading).setHeading();
 
     new Setting(containerEl)
       .setName(i18n.settingLanguageName)
@@ -71,7 +71,7 @@ export class HtmlNoteViewSettingTab extends PluginSettingTab {
         })
       );
 
-    containerEl.createEl('h2', { text: i18n.settingsBadgeHeading });
+    new Setting(containerEl).setName(i18n.settingsBadgeHeading).setHeading();
 
     new Setting(containerEl)
       .setName(i18n.settingShowBadgeName)
@@ -116,7 +116,7 @@ export class HtmlNoteViewSettingTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl('h2', { text: i18n.settingsLintHeading });
+    new Setting(containerEl).setName(i18n.settingsLintHeading).setHeading();
 
     new Setting(containerEl)
       .setName(i18n.settingEnableLintName)

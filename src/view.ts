@@ -34,7 +34,7 @@ export class FullHtmlLeafView extends FileView {
   getDisplayText(): string {
     if (!this.file) return 'HTML View';
     const cache = this.app.metadataCache.getFileCache(this.file);
-    const title = cache?.frontmatter?.title;
+    const title: unknown = cache?.frontmatter?.title;
     return typeof title === 'string' && title.trim() ? title.trim() : this.file.basename;
   }
 
@@ -115,7 +115,7 @@ export class FullHtmlLeafView extends FileView {
     this.targetHtmlPath = htmlFile.path;
     const rawHtml = await this.app.vault.cachedRead(htmlFile);
     const cache = this.app.metadataCache.getFileCache(file);
-    const isDark = document.body.classList.contains('theme-dark');
+    const isDark = activeDocument.body.classList.contains('theme-dark');
     this.iframe.srcdoc = prepareHtmlSrcdoc(
       rawHtml,
       cache?.frontmatter,
