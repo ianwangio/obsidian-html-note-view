@@ -1,0 +1,33 @@
+{
+  "name": "obsidian-html-note-view",
+  "version": "0.1.0",
+  "description": "Render interactive HTML attachments as full-tab Obsidian views while keeping native Markdown frontmatter, Bases (.base) tags, wikilinks, and full-text search.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+    "typecheck": "tsc -noEmit -skipLibCheck"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "html",
+    "bases",
+    "pkm",
+    "ai-agents",
+    "frontmatter"
+  ],
+  "author": "IanWang <ianwang.io@outlook.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ianwangio/obsidian-html-note-view.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.25.0",
+    "obsidian": "^1.6.7",
+    "typescript": "^5.4.5"
+  }
+}

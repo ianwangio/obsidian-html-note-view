@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output (attached via GitHub Release workflow)
+main.js
+*.js.map
+
+# Obsidian local user configuration
+data.json
+
+# OS & Editor
+.DS_Store
+.idea/
+.vscode/
+*.log

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>示例：交互式系统架构手册</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #151d2c;
+      --border: #26334d;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 14px 28px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+    .layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 24px 96px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 28px;
+    }
+    nav { position: sticky; top: 80px; align-self: start; }
+    nav ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    nav a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a.active, nav a:hover { background: var(--card); color: var(--accent); font-weight: 600; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      scroll-margin-top: 84px;
+    }
+    h2 { margin-bottom: 10px; font-size: 19px; }
+    p { color: var(--muted); font-size: 14.5px; }
+  </style>
+</head>
+<body>
+  <header>HTML Note View · 全屏交互式笔记示例</header>
+  <div class="layout">
+    <nav>
+      <ul>
+        <li><a href="#sec-why" class="active">01 · 架构背景</a></li>
+        <li><a href="#sec-bridge">02 · 主题与链接桥接</a></li>
+        <li><a href="#sec-lint">03 · 标签保存校验</a></li>
+      </ul>
+    </nav>
+    <main>
+      <section id="sec-why">
+        <h2>01 · 为什么采用「.md 宿主 + .html 附件」</h2>
+        <p>兼顾 Obsidian 原生 Bases（.base）属性表、双链图谱、全局全文检索与 100% 无边距全屏交互网页渲染。</p>
+      </section>
+      <section id="sec-bridge">
+        <h2>02 · 主题同步与目录锚点桥接</h2>
+        <p>插件自动将 Obsidian 深浅色状态写入根元素 data-theme，并修复 Electron srcdoc 下 #anchor 目录平滑滚动与外链跳转。</p>
+      </section>
+      <section id="sec-lint">
+        <h2>03 · 保存时 Frontmatter 标签与状态 Lint</h2>
+        <p>修改笔记属性保存时，自动检查 kebab-case 格式、数量上限与可选的受控标签词表。</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
